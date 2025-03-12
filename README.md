@@ -1,30 +1,50 @@
 # pgm_map_creator
+
 Create pgm map from Gazebo world file for ROS localization
 
 ## Environment
-Tested on Ubuntu 18.04, ROS Melodic, Boost 1.65
+
+Tested on Ubuntu 20.04, ROS Noetic, Boost 1.71
+
+## Install
+
+Use the following commands to download and compile the package:
+```bash
+cd ~/catkin_ws/src
+git clone https://github.com/adthoms/pgm_map_creator
+cd ..
+catkin build
+```
 
 ## Usage
 
-### Add the package to your workspace
-0. Create a catkin workspace
-1. Clone the package to the src folder
-2. `catkin build pgm_map_creator` and source `devel/setup.bash`
+1. Add a `*.world` file to the world folder and include the line:
+```
+<plugin filename="libcollision_map_creator.so" name="collision_map_creator"/>
+```
+at the end of the world file before the `</world>` tag.
 
-### Add the map and insert the plugin
-1. Add this line at the end of the world file, before `</world>` tag:
-`<plugin filename="libcollision_map_creator.so" name="collision_map_creator"/>`
+2. Open a terminal and run:
+```bash
+cd ~/catkin_ws/src
+gzserver src/pgm_map_creator/world/<map file>
+```
+you should see:
+```
+Subscribing to: ~/collision_map/command
+```
 
-### Create the pgm map file
-1a. Open a terminal, run gzerver with the map file
-`gzserver src/pgm_map_creator/world/<map file>`
-1b. Launch the world file normally
-2. Open another terminal, launch the request_publisher node
-`roslaunch pgm_map_creator request_publisher.launch`
-3. Wait for the plugin to generate map. It will be located in the map folder
-
-## Map Properties
-Currently, please update the argument value in launch/request_publisher.launch file.
+3. Open another terminal and run:
+```bash
+roslaunch pgm_map_creator request_publisher.launch \
+  xmin:=-15 \
+  xmax:=15 \
+  ymin:=-15 \
+  ymax:=15 \
+  scan_height:=5 \
+  resolution:=0.01
+```
+Wait for the plugin to generate map. It will be located in the map folder.
 
 ## Edits
 You can edit the map in an external software like [GIMP](https://www.gimp.org/). 
