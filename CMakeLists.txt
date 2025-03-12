@@ -17,6 +17,11 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(Boost REQUIRED COMPONENTS system)
 
+catkin_package(
+  CATKIN_DEPENDS
+    roscpp rospy
+)
+
 ###########
 ## Build ##
 ###########
@@ -31,8 +36,9 @@ link_directories(${GAZEBO_LIBRARY_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/msgs)
 add_subdirectory(msgs)
 
 add_executable (request_publisher src/request_publisher.cc)
-target_link_libraries(request_publisher collision_map_creator_msgs ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${SDF_LIBRARIES} pthread)
+target_link_libraries(request_publisher ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${SDF_LIBRARIES} collision_map_creator_msgs pthread)
 add_dependencies(request_publisher collision_map_creator_msgs)
+install(TARGETS request_publisher RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 add_library(collision_map_creator SHARED src/collision_map_creator.cc )
 target_link_libraries(collision_map_creator collision_map_creator_msgs ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES} ${SDF_LIBRARIES} pthread)
